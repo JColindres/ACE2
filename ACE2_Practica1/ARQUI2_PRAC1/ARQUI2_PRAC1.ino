@@ -1,3 +1,8 @@
+#include <SoftwareSerial.h>
+#include "LedControlMS.h"
+#define numMatriz 1
+
+SoftwareSerial Arduino(11, 10);
 
 #define NOTA 784
 #define APRETADO    0
@@ -5,19 +10,133 @@
 #define APRETANDOLO 2
 #define SOLTANDOLO  3
 
+const int switch1Pin = 6;    // switch input 1
+const int switch2Pin = 7;    // switch input 2
 int  melodyPin = 4;
 const int boton = 2; // Botón asignado en el pin 2.
+
 int   anterior;      // guardamos el estado anterior.
 int   valor;         // valor actual del botón.
 int   estado;        // el estado del botón.
 unsigned long tiempopresionado = 0;
 unsigned long tiemposuelto = 0;
+unsigned long tiempoSHN = 0;
 unsigned long temporizador;
 unsigned long tiemporebote = 50;
 String concatenar;
 
+int punteo = 0;
+
 char mensaje[10];
 int indiceLetra = 0;
+
+LedControl lc = LedControl(22, 26, 24, numMatriz);
+bool letraH[93][8] = {
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+  
+  {1,1,1,1,1,1,1,1},
+  {0,0,0,0,1,0,0,0},
+  {0,0,0,0,1,0,0,0},
+  {0,0,0,0,1,0,0,0},
+  {1,1,1,1,1,1,1,1},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+
+  {0,1,1,1,1,1,1,0},
+  {1,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,1},
+  {0,1,1,1,1,1,1,0},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+  
+  {1,1,1,1,1,1,1,1},
+  {1,0,0,0,0,0,0,0},
+  {1,0,0,0,0,0,0,0},
+  {1,0,0,0,0,0,0,0},
+  {1,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+  
+  {1,1,1,1,1,1,1,0},
+  {0,0,0,1,0,0,0,1},
+  {0,0,0,1,0,0,0,1},
+  {0,0,0,1,0,0,0,1},
+  {1,1,1,1,1,1,1,0},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+
+  {0,1,1,1,1,1,1,0},
+  {1,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,1},
+  {1,0,0,1,0,0,0,1},
+  {0,1,1,1,0,0,1,0},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+
+  {1,1,1,1,1,1,1,1},
+  {0,0,0,1,0,0,0,1},
+  {0,0,1,1,0,0,0,1},
+  {0,1,0,1,0,0,0,1},
+  {1,0,0,0,1,1,1,0},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+
+  {0,1,1,1,1,1,1,1},
+  {1,0,0,0,0,0,0,0},
+  {1,0,0,0,0,0,0,0},
+  {1,0,0,0,0,0,0,0},
+  {0,1,1,1,1,1,1,1},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+
+  {1,1,1,1,1,1,1,1},
+  {0,0,0,1,0,0,0,1},
+  {0,0,0,1,0,0,0,1},
+  {0,0,0,1,0,0,0,1},
+  {0,0,0,0,1,1,1,0},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+
+  {0,1,1,1,1,1,1,0},
+  {1,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,1},
+  {0,1,1,1,1,1,1,0},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+
+  {1,1,1,0,0,0,1,0},
+  {1,0,0,1,0,0,0,1},
+  {1,0,0,1,0,0,0,1},
+  {1,0,0,1,0,0,0,1},
+  {1,0,0,0,1,1,1,0},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0}
+};
 
 //------------------------NUMEROS--------------------------------
 int cero[] = {
@@ -246,131 +365,6 @@ int tempo_r[] = {
   4,1,4
 };
 
-void setup() {
-  // put your setup code here, to run once:
-  Serial.begin(9600);
-  pinMode(4, OUTPUT);//buzzer
-  pinMode(8, OUTPUT);
-  
-  pinMode(boton,INPUT_PULLUP);
-  pinMode(13,OUTPUT); // Vamos a usar el led de la placa como señalización.
-  estado = HIGH;
-  anterior = HIGH;
-}
-
-void loop() {
-  
-  // Si el estado es igual a lo leido, la entrada no ha cambiado lo que
-  // significa que no hemos apretado el botón (ni lo hemos soltado); asi que
-  // tenemos que parar el temporizador.
-  if ( valor==digitalRead(2) ) {
-    temporizador = 0;
-  }
-  // Si el valor distinto significa que hemos pulsado/soltado el botón. Ahora
-  // tendremos que comprobar el estado del temporizador, si vale 0, significa que
-  // no hemos guardado el tiempo en el que sa ha producido el cambio, así que
-  // hemos de guardarlo.
-  else
-  if ( temporizador == 0 ) {
-    // El temporizador no está iniciado, así que hay que guardar
-    // el valor de millis en él.
-    temporizador = millis();
-  }
-  else
-  // El temporizador está iniciado, hemos de comprobar si el
-  // el tiempo que deseamos de rebote ha pasado.
-  if ( millis()-temporizador > tiemporebote ) {
-    // Si el tiempo ha pasado significa que el estado es lo contrario
-    // de lo que había, asi pues, lo cambiamos.
-    valor = !valor;
-  }
-
-  // Ahora comprobamos el estado. Recordad que si el boton vale "1" estará suelto,
-  // "0" y el botón estará apretado. Si pasa de "1" a "0" es que lo estamos aprentando
-  // y si es al contrario es que lo estamos soltando.
-  if ( anterior==LOW  && valor==LOW  ) {estado = APRETADO; tiempopresionado++;}
-  if ( anterior==LOW  && valor==HIGH ) {estado = SOLTANDOLO;}
-  if ( anterior==HIGH && valor==LOW  ) {estado = APRETANDOLO;}
-  if ( anterior==HIGH && valor==HIGH ) {estado = SUELTO; tiempopresionado = 0; tiemposuelto++;}
-
-  // Recuerda que hay que guardar el estado anterior.
-  anterior = valor;
-
-  // Ahora vamos a ver que podemos hacer con el estado.
-  switch ( estado ) {
-    case SUELTO:   
-      digitalWrite(13,LOW); 
-      noTone(4);
-      if(tiemposuelto == 100000){
-        //Serial.println(concatenar);
-        MorseAscii(concatenar);
-        concatenar = "";
-      } 
-      break; // Apagamos el led.
-    case APRETANDOLO: 
-      //Serial.print("Has apretado el botón\n"); 
-      break; // Mandamos un mensaje.
-    case APRETADO: 
-      digitalWrite(13,HIGH); 
-      tone(4,NOTA,200); 
-      break; // Encendemos el led.
-    case SOLTANDOLO: 
-      tiemposuelto = 0; 
-      //Serial.print("Has soltado el botón\n"); 
-      //Serial.print(tiempopresionado); 
-      //Serial.print("\n"); 
-      if(tiempopresionado > 1000 && tiempopresionado < 20000){
-        concatenar += ".";
-      }else if(tiempopresionado > 20000){
-        concatenar += "-";
-      }
-      break; // Mandamos un mensaje.
-    default: break;
-  }
-
-  /*
-  //numeros del 0 al 9
-  sing(48);
-  sing(49);
-  sing(50);
-  sing(51);
-  sing(52);
-  sing(53);
-  sing(54);
-  sing(55);
-  sing(56);
-  sing(57);
-  //letras de la A a la Z
-  sing(65);
-  sing(66);
-  sing(67);
-  sing(68);
-  sing(69);
-  sing(70);
-  sing(71);
-  sing(72);
-  sing(73);
-  sing(74);
-  sing(75);
-  sing(76);
-  sing(77);
-  sing(78);
-  sing(79);
-  sing(80);
-  sing(81);
-  sing(82);
-  sing(83);
-  sing(84);
-  sing(85);
-  sing(86);
-  sing(87);
-  sing(88);
-  sing(89);
-  sing(90);*/
-}
-
-int song = 0;
-
 int ese[] = {
   NOTA, NOTA, NOTA
 };
@@ -434,6 +428,483 @@ int z[] = {
 int tempo_z[] = {
   1,1,4,4
 };
+
+bool punto[8][8] = {
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+  {0,0,1,1,1,1,0,0},
+  {0,0,1,1,1,1,0,0},
+  {0,0,1,1,1,1,0,0},
+  {0,0,1,1,1,1,0,0},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+};
+
+bool guion[8][8] = {
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+  {0,1,1,1,1,1,1,0},
+  {0,1,1,1,1,1,1,0},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0},
+};
+
+void setup() {
+  // put your setup code here, to run once:
+  Serial.begin(9600);
+  Arduino.begin(4800);
+  
+  pinMode(4, OUTPUT);//buzzer
+  pinMode(8, OUTPUT);
+  pinMode(switch1Pin, INPUT); 
+  pinMode(switch2Pin, INPUT);
+  
+  pinMode(boton,INPUT_PULLUP);
+  pinMode(13,OUTPUT); // Vamos a usar el led de la placa como señalización.
+  estado = HIGH;
+  anterior = HIGH;
+
+  lc.shutdown(0, false);
+  lc.setIntensity(0, 8);
+  lc.clearDisplay(0);
+  //mostrarMensaje();   
+}
+
+void loop() {
+  if (digitalRead(switch1Pin) == HIGH) { //Hacer post
+    lc.clearDisplay(0);
+    palPost();
+  } 
+  else if(digitalRead(switch2Pin) == HIGH){ //Hacer get
+    lc.clearDisplay(0);
+    if(Arduino.available() > 0){
+      String cadenarecibida;
+      cadenarecibida = Arduino.readString();
+      
+      for(int iii = 0; iii < 10; iii++){
+        if((cadenarecibida[iii] > 47 && cadenarecibida[iii] < 58) || (cadenarecibida[iii] > 64 && cadenarecibida[iii] < 91)){
+          sing(true, cadenarecibida[iii]);
+        }
+      }
+    }
+  }
+  else { //Hacer get y el juego 
+    lc.clearDisplay(0);    
+    if(Arduino.available() > 0){
+      String cadenarecibida;
+      cadenarecibida = Arduino.readString();
+      indiceLetra = 0;
+      punteo = 0;
+      concatenar = "";
+      while(true && indiceLetra != 10){
+        if((cadenarecibida[indiceLetra] > 47 && cadenarecibida[indiceLetra] < 58) || (cadenarecibida[indiceLetra] > 64 && cadenarecibida[indiceLetra] < 91)){
+          desplegar(cadenarecibida[indiceLetra]);          
+          juego(cadenarecibida[indiceLetra]);
+          if(indiceLetra == 10){
+            break;
+          }
+        }
+      }
+    }
+  }
+}
+
+int song = 0;
+
+void mostrarMensaje() {
+  for(int k=0; k<86; k++) { 
+    for(int i=0; i<8; i++) {
+      for(int j=0; j<8; j++) {
+        lc.setLed(0, i, j, letraH[i+k][j]);
+      }
+    }
+    delay(350);
+    //meter aca el morse de las letras del mensaje de inicio!
+    if(k == 6){
+      sing(false, 'H');
+    }
+    if(k == 14){
+      sing(false, 'O');
+    }
+    if(k == 22){
+      sing(false, 'L');
+    }
+    if(k == 30){
+      sing(false, 'A');
+    }
+    if(k == 38){
+      sing(false, 'G');
+    }
+    if(k == 46){
+      sing(false, 'R');
+    }
+    if(k == 54){
+      sing(false, 'U');
+    }
+    if(k == 62){
+      sing(false, 'P');
+    }
+    if(k == 70){
+      sing(false, 'O');
+    }
+    if(k == 78){
+      sing(false, '2');
+    }
+  }
+}
+
+void juego(char car){
+  if ( valor==digitalRead(2) ) {
+    temporizador = 0;
+  }
+  else if ( temporizador == 0 ) {
+    temporizador = millis();
+  }
+  else if ( millis()-temporizador > tiemporebote ) {
+    valor = !valor;
+  }
+  if ( anterior==LOW  && valor==LOW  ) {estado = APRETADO; tiempopresionado++;}
+  if ( anterior==LOW  && valor==HIGH ) {estado = SOLTANDOLO;}
+  if ( anterior==HIGH && valor==LOW  ) {estado = APRETANDOLO;}
+  if ( anterior==HIGH && valor==HIGH ) {estado = SUELTO; tiempopresionado = 0; /*tiempoSHN++;*/ tiemposuelto++;}
+
+  anterior = valor;
+
+  //desplegar(car);
+  switch ( estado ) {
+    case SUELTO:   
+      digitalWrite(13,LOW); 
+      noTone(4);
+      Serial.println(tiempoSHN);
+      if(tiemposuelto == 100){
+        veriSSHC(concatenar, car);
+        concatenar = "";
+      } 
+//      if(tiempoSHN == 400){
+//        veriSSHC(concatenar, car);
+//        concatenar = "";
+//        fracaso();
+//        indiceLetra++;
+//        tiempoSHN = 0;
+//      } 
+      break;
+    case APRETANDOLO: 
+      break;
+    case APRETADO: 
+      digitalWrite(13,HIGH); 
+      tone(4,NOTA,200); 
+      //desplegar(car);
+      break;
+    case SOLTANDOLO: 
+      tiemposuelto = 0; 
+      //tiempoSHN = 0; 
+      if(tiempopresionado > 3 && tiempopresionado < 15){
+        concatenar += ".";
+      }else if(tiempopresionado > 15){
+        concatenar += "-";
+      }
+      break; 
+    default: 
+      break;
+  }
+}
+
+void exito(){
+  tone(4,1047);
+  delay(250);
+  noTone(4);
+  delay(100);
+  tone(4,1109);
+  delay(500);
+  noTone(4);
+  punteo++;
+}
+
+void fracaso(){
+  tone(4,294);
+  delay(250);
+  noTone(4);
+  delay(100);
+  tone(4,294);
+  delay(500);
+  noTone(4);
+}
+
+void veriSSHC(String caracter, char car) {
+  Serial.println(caracter);
+  Serial.println(car);
+  if(caracter == "-----" && car == '0'){
+    Serial.print("0");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == ".----" && car == '1'){
+    Serial.print("1");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == "..---" && car == '2'){
+    Serial.print("2");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == "...--" && car == '3'){
+    Serial.print("3");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == "....-" && car == '4'){
+    Serial.print("4");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == "....." && car == '5'){
+    Serial.print("5");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == "-...." && car == '6'){
+    Serial.print("6");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == "--..." && car == '7'){
+    Serial.print("7");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == "---.." && car == '8'){
+    Serial.print("8");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == "----." && car == '9'){
+    Serial.print("9");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == ".-" && car == 'A'){
+    Serial.print("A");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == "-..." && car == 'B'){
+    Serial.print("B");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == "-.-." && car == 'C'){
+    Serial.print("C");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == "-.." && car == 'D'){
+    Serial.print("D");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == "." && car == 'E'){
+    Serial.print("E");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == "..-." && car == 'F'){
+    Serial.print("F");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == "--." && car == 'G'){
+    Serial.print("G");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == "...." && car == 'H'){
+    Serial.print("H");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == ".." && car == 'I'){
+    Serial.print("I");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == ".---" && car == 'J'){
+    Serial.print("J");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == "-.-" && car == 'K'){
+    Serial.print("K");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == ".-.." && car == 'L'){
+    Serial.print("L");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == "--" && car == 'M'){
+    Serial.print("M");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == "-." && car == 'N'){
+    Serial.print("N");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == "---" && car == 'O'){
+    Serial.print("O");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == ".--." && car == 'P'){
+    Serial.print("P");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == "--.-" && car == 'Q'){
+    Serial.print("Q");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == ".-." && car == 'R'){
+    Serial.print("R");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == "..." && car == 'S'){
+    Serial.print("S");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == "-" && car == 'T'){
+    Serial.print("T");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == "..-" && car == 'U'){
+    Serial.print("U");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == "...-" && car == 'V'){
+    Serial.print("V");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == ".--" && car == 'W'){
+    Serial.print("W");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == "-..-" && car == 'X'){
+    Serial.print("X");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == "-.--" && car == 'Y'){
+    Serial.print("Y");
+    exito();
+    indiceLetra++;
+  }
+  else if(caracter == "--.." && car == 'Z'){
+    Serial.print("Z");
+    exito();
+    indiceLetra++;
+  }
+  else{
+    fracaso();
+    indiceLetra++;
+  }
+  if(indiceLetra == 10)
+  {
+    Serial.print(punteo);
+    if(punteo == 1){
+      desplegar('1');
+    }
+    if(punteo == 2){
+      desplegar('2');
+    }
+    if(punteo == 3){
+      desplegar('3');
+    }
+    if(punteo == 4){
+      desplegar('4');
+    }
+    if(punteo == 5){
+      desplegar('5');
+    }
+    if(punteo == 6){
+      desplegar('6');
+    }
+    if(punteo == 7){
+      desplegar('7');
+    }
+    if(punteo == 8){
+      desplegar('8');
+    }
+    if(punteo == 9){
+      desplegar('9');
+    }
+    if(punteo == 0){
+      desplegar('0');
+    }
+    if(punteo == 10){
+      desplegar('1');
+    }    
+    
+    delay(2500);
+    return;
+  }
+}
+
+void palPost() {
+  if ( valor==digitalRead(2) ) {
+    temporizador = 0;
+  }
+  else if ( temporizador == 0 ) {
+    temporizador = millis();
+  }
+  else if ( millis()-temporizador > tiemporebote ) {
+    valor = !valor;
+  }
+  if ( anterior==LOW  && valor==LOW  ) {estado = APRETADO; tiempopresionado++;}
+  if ( anterior==LOW  && valor==HIGH ) {estado = SOLTANDOLO;}
+  if ( anterior==HIGH && valor==LOW  ) {estado = APRETANDOLO;}
+  if ( anterior==HIGH && valor==HIGH ) {estado = SUELTO; tiempopresionado = 0; tiemposuelto++;}
+
+  anterior = valor;
+
+  switch ( estado ) {
+    case SUELTO:   
+      digitalWrite(13,LOW); 
+      noTone(4);
+      if(tiemposuelto == 900){
+        MorseAscii(concatenar);
+        concatenar = "";
+      } 
+      break;
+    case APRETANDOLO: 
+      break;
+    case APRETADO: 
+      digitalWrite(13,HIGH); 
+      tone(4,NOTA,200); 
+      break;
+    case SOLTANDOLO: 
+      tiemposuelto = 0; 
+      if(tiempopresionado > 25 && tiempopresionado < 90){
+        concatenar += ".";
+      }else if(tiempopresionado > 90){
+        concatenar += "-";
+      }
+      break; 
+    default: 
+      break;
+  }
+}
 
 void MorseAscii(String caracter) {
   if(caracter == "-----"){
@@ -620,11 +1091,12 @@ void MorseAscii(String caracter) {
   {
     Serial.println("");
     Serial.println(mensaje);
+    Arduino.write(mensaje);
     indiceLetra = 0;
   }
 }
 
-void sing(int s) {
+void sing(bool PyG, int s) {
   // iterate over the notes of the melody:
   song = s;
   if (song == 48) {
@@ -637,7 +1109,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_cero[thisNote];
 
-      buzz(melodyPin, cero[thisNote], noteDuration);
+      buzz(PyG, melodyPin, cero[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -645,7 +1117,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -659,7 +1131,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_uno[thisNote];
 
-      buzz(melodyPin, uno[thisNote], noteDuration);
+      buzz(PyG, melodyPin, uno[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -667,7 +1139,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -681,7 +1153,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_dos[thisNote];
 
-      buzz(melodyPin, dos[thisNote], noteDuration);
+      buzz(PyG, melodyPin, dos[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -689,7 +1161,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -703,7 +1175,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_tres[thisNote];
 
-      buzz(melodyPin, tres[thisNote], noteDuration);
+      buzz(PyG, melodyPin, tres[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -711,7 +1183,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -725,7 +1197,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_cuatro[thisNote];
 
-      buzz(melodyPin, cuatro[thisNote], noteDuration);
+      buzz(PyG, melodyPin, cuatro[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -733,7 +1205,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -747,7 +1219,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_cinco[thisNote];
 
-      buzz(melodyPin, cinco[thisNote], noteDuration);
+      buzz(PyG, melodyPin, cinco[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -755,7 +1227,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -769,7 +1241,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_seis[thisNote];
 
-      buzz(melodyPin, seis[thisNote], noteDuration);
+      buzz(PyG, melodyPin, seis[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -777,7 +1249,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -791,7 +1263,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_siete[thisNote];
 
-      buzz(melodyPin, siete[thisNote], noteDuration);
+      buzz(PyG, melodyPin, siete[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -799,7 +1271,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -813,7 +1285,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_ocho[thisNote];
 
-      buzz(melodyPin, ocho[thisNote], noteDuration);
+      buzz(PyG, melodyPin, ocho[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -821,7 +1293,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -835,7 +1307,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_nueve[thisNote];
 
-      buzz(melodyPin, nueve[thisNote], noteDuration);
+      buzz(PyG, melodyPin, nueve[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -843,7 +1315,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -857,7 +1329,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_a[thisNote];
 
-      buzz(melodyPin, a[thisNote], noteDuration);
+      buzz(PyG, melodyPin, a[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -865,7 +1337,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -879,7 +1351,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_b[thisNote];
 
-      buzz(melodyPin, b[thisNote], noteDuration);
+      buzz(PyG, melodyPin, b[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -887,7 +1359,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -901,7 +1373,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_c[thisNote];
 
-      buzz(melodyPin, c[thisNote], noteDuration);
+      buzz(PyG, melodyPin, c[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -909,7 +1381,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -923,7 +1395,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_d[thisNote];
 
-      buzz(melodyPin, d[thisNote], noteDuration);
+      buzz(PyG, melodyPin, d[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -931,7 +1403,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -945,7 +1417,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_e[thisNote];
 
-      buzz(melodyPin, e[thisNote], noteDuration);
+      buzz(PyG, melodyPin, e[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -953,7 +1425,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -967,7 +1439,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_f[thisNote];
 
-      buzz(melodyPin, f[thisNote], noteDuration);
+      buzz(PyG, melodyPin, f[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -975,7 +1447,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -989,7 +1461,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_g[thisNote];
 
-      buzz(melodyPin, g[thisNote], noteDuration);
+      buzz(PyG, melodyPin, g[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -997,7 +1469,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -1011,7 +1483,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_h[thisNote];
 
-      buzz(melodyPin, h[thisNote], noteDuration);
+      buzz(PyG, melodyPin, h[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -1019,7 +1491,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -1033,7 +1505,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_i[thisNote];
 
-      buzz(melodyPin, i[thisNote], noteDuration);
+      buzz(PyG, melodyPin, i[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -1041,7 +1513,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -1055,7 +1527,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_j[thisNote];
 
-      buzz(melodyPin, j[thisNote], noteDuration);
+      buzz(PyG, melodyPin, j[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -1063,7 +1535,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -1077,7 +1549,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_k[thisNote];
 
-      buzz(melodyPin, k[thisNote], noteDuration);
+      buzz(PyG, melodyPin, k[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -1085,7 +1557,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -1099,7 +1571,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_l[thisNote];
 
-      buzz(melodyPin, l[thisNote], noteDuration);
+      buzz(PyG, melodyPin, l[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -1107,7 +1579,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -1121,7 +1593,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_m[thisNote];
 
-      buzz(melodyPin, m[thisNote], noteDuration);
+      buzz(PyG, melodyPin, m[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -1129,7 +1601,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -1143,7 +1615,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_n[thisNote];
 
-      buzz(melodyPin, n[thisNote], noteDuration);
+      buzz(PyG, melodyPin, n[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -1151,7 +1623,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -1165,7 +1637,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_o[thisNote];
 
-      buzz(melodyPin, o[thisNote], noteDuration);
+      buzz(PyG, melodyPin, o[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -1173,7 +1645,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -1187,7 +1659,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_p[thisNote];
 
-      buzz(melodyPin, p[thisNote], noteDuration);
+      buzz(PyG, melodyPin, p[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -1195,7 +1667,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -1209,7 +1681,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_q[thisNote];
 
-      buzz(melodyPin, q[thisNote], noteDuration);
+      buzz(PyG, melodyPin, q[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -1217,7 +1689,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -1231,7 +1703,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_r[thisNote];
 
-      buzz(melodyPin, r[thisNote], noteDuration);
+      buzz(PyG, melodyPin, r[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -1239,7 +1711,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -1253,7 +1725,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_s[thisNote];
 
-      buzz(melodyPin, ese[thisNote], noteDuration);
+      buzz(PyG, melodyPin, ese[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -1261,7 +1733,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -1275,7 +1747,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_t[thisNote];
 
-      buzz(melodyPin, t[thisNote], noteDuration);
+      buzz(PyG, melodyPin, t[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -1283,7 +1755,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -1297,7 +1769,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_u[thisNote];
 
-      buzz(melodyPin, u[thisNote], noteDuration);
+      buzz(PyG, melodyPin, u[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -1305,7 +1777,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -1319,7 +1791,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_v[thisNote];
 
-      buzz(melodyPin, v[thisNote], noteDuration);
+      buzz(PyG, melodyPin, v[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -1327,7 +1799,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -1341,7 +1813,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_w[thisNote];
 
-      buzz(melodyPin, w[thisNote], noteDuration);
+      buzz(PyG, melodyPin, w[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -1349,7 +1821,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -1363,7 +1835,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_x[thisNote];
 
-      buzz(melodyPin, x[thisNote], noteDuration);
+      buzz(PyG, melodyPin, x[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -1371,7 +1843,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -1385,7 +1857,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_y[thisNote];
 
-      buzz(melodyPin, y[thisNote], noteDuration);
+      buzz(PyG, melodyPin, y[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -1393,7 +1865,7 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
@@ -1407,7 +1879,7 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       int noteDuration = 1000 / tempo_z[thisNote];
 
-      buzz(melodyPin, z[thisNote], noteDuration);
+      buzz(PyG, melodyPin, z[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -1415,15 +1887,28 @@ void sing(int s) {
       delay(pauseBetweenNotes);
 
       // stop the tone playing:
-      buzz(melodyPin, 0, noteDuration);
+      buzz(PyG, melodyPin, 0, noteDuration);
 
     }
   }
   delay(1000);
 }
 
-void buzz(int targetPin, long frequency, long length) {
-  digitalWrite(8, HIGH);
+void buzz(bool PyG, int targetPin, long frequency, long length) {
+  if(length == 250 && PyG == true){
+    for(int i=0; i<8; i++) {
+      for(int j=0; j<8; j++) {
+        lc.setLed(0, i, j, punto[i][j]);
+      }
+    }
+  }  
+  else if(length == 1000 && PyG == true){
+    for(int i=0; i<8; i++) {
+      for(int j=0; j<8; j++) {
+        lc.setLed(0, j, i, guion[i][j]);
+      }
+    }
+  }
   long delayValue = 1000000 / frequency / 2; // calculate the delay value between transitions
   //// 1 second's worth of microseconds, divided by the frequency, then split in half since
   //// there are two phases to each cycle
@@ -1436,6 +1921,489 @@ void buzz(int targetPin, long frequency, long length) {
     digitalWrite(targetPin, LOW); // write the buzzer pin low to pull back the diaphram
     delayMicroseconds(delayValue); // wait again or the calculated delay value
   }
-  digitalWrite(8, LOW);
+  if(PyG == true){
+    lc.clearDisplay(0);
+  }
+}
 
+void desplegar(char carac){
+  
+  bool matriz0[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,0,1,1,0,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,1,1,0,0},
+      {0,0,1,1,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,0,1,1,0,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matriz1[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,0,0,1,0,0,0},
+      {0,0,0,1,1,0,0,0},
+      {0,0,1,0,1,0,0,0},
+      {0,0,0,0,1,0,0,0},
+      {0,0,0,0,1,0,0,0},
+      {0,0,0,0,1,0,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matriz2[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,0,1,1,0,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,0,0,0,1,0,0},
+      {0,0,0,1,1,0,0,0},
+      {0,0,1,0,0,0,0,0},
+      {0,0,1,1,1,1,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matriz3[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,0,1,1,0,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,0,0,1,0,0,0},
+      {0,0,0,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,0,1,1,0,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matriz4[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,0,0,1,1,0,0},
+      {0,0,0,1,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,1,1,1,0,0},
+      {0,0,0,0,0,1,0,0},
+      {0,0,0,0,0,1,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matriz5[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,1,1,1,1,0,0},
+      {0,0,1,0,0,0,0,0},
+      {0,0,1,1,1,0,0,0},
+      {0,0,0,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,0,1,1,0,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matriz6[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,0,1,1,0,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,0,0,0},
+      {0,0,1,1,1,0,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,0,1,1,0,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matriz7[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,1,1,1,1,0,0},
+      {0,0,0,0,0,1,0,0},
+      {0,0,0,0,1,0,0,0},
+      {0,0,0,1,0,0,0,0},
+      {0,0,1,0,0,0,0,0},
+      {0,0,1,0,0,0,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matriz8[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,0,1,1,0,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,0,1,1,0,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,0,1,1,0,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matriz9[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,0,1,1,0,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,0,1,1,1,0,0},
+      {0,0,0,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,0,1,1,0,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matrizA[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,0,1,1,0,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,1,1,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matrizB[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,1,1,1,0,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,1,1,0,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,1,1,0,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matrizC[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,0,1,1,0,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,0,0,0},
+      {0,0,1,0,0,0,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,0,1,1,0,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matrizD[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,1,1,1,0,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,1,1,0,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matrizE[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,1,1,1,1,0,0},
+      {0,0,1,0,0,0,0,0},
+      {0,0,1,1,1,0,0,0},
+      {0,0,1,0,0,0,0,0},
+      {0,0,1,0,0,0,0,0},
+      {0,0,1,1,1,1,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matrizF[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,1,1,1,1,0,0},
+      {0,0,1,0,0,0,0,0},
+      {0,0,1,1,1,0,0,0},
+      {0,0,1,0,0,0,0,0},
+      {0,0,1,0,0,0,0,0},
+      {0,0,1,0,0,0,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matrizG[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,0,1,1,0,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,0,0,0},
+      {0,0,1,0,1,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,0,1,1,0,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matrizH[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,1,1,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matrizI[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,0,1,1,1,0,0},
+      {0,0,0,0,1,0,0,0},
+      {0,0,0,0,1,0,0,0},
+      {0,0,0,0,1,0,0,0},
+      {0,0,0,0,1,0,0,0},
+      {0,0,0,1,1,1,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matrizJ[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,0,1,1,1,0,0},
+      {0,0,0,0,0,1,0,0},
+      {0,0,0,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,0,1,1,0,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matrizK[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,1,0,0,0},
+      {0,0,1,1,0,0,0,0},
+      {0,0,1,0,1,0,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matrizL[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,1,0,0,0,0,0},
+      {0,0,1,0,0,0,0,0},
+      {0,0,1,0,0,0,0,0},
+      {0,0,1,0,0,0,0,0},
+      {0,0,1,0,0,0,0,0},
+      {0,0,1,1,1,1,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matrizM[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,1,0,0,0,1,0},
+      {0,0,1,1,0,1,1,0},
+      {0,0,1,0,1,0,1,0},
+      {0,0,1,0,0,0,1,0},
+      {0,0,1,0,0,0,1,0},
+      {0,0,1,0,0,0,1,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matrizN[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,1,0,0,0,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,1,0,1,0,0},
+      {0,0,1,0,1,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matrizO[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,0,1,1,0,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,0,1,1,0,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matrizP[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,1,1,1,0,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,1,1,0,0,0},
+      {0,0,1,0,0,0,0,0},
+      {0,0,1,0,0,0,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matrizQ[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,0,1,1,0,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,0,1,1,1,1,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matrizR[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,1,1,1,0,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,1,1,0,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matrizS[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,0,1,1,0,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,0,1,0,0,0,0},
+      {0,0,0,0,1,0,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,0,1,1,0,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matrizT[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,1,1,1,1,1,0},
+      {0,0,0,0,1,0,0,0},
+      {0,0,0,0,1,0,0,0},
+      {0,0,0,0,1,0,0,0},
+      {0,0,0,0,1,0,0,0},
+      {0,0,0,0,1,0,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matrizU[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,1,1,1,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matrizV[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,0,1,1,0,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matrizW[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,1,0,0,0,1,0},
+      {0,0,1,0,0,0,1,0},
+      {0,0,1,0,0,0,1,0},
+      {0,0,1,0,1,0,1,0},
+      {0,0,1,0,1,0,1,0},
+      {0,0,0,1,0,1,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matrizX[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,0,1,1,0,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,1,0,0,1,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matrizY[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,1,0,0,0,1,0},
+      {0,0,1,0,0,0,1,0},
+      {0,0,0,1,0,1,0,0},
+      {0,0,0,0,1,0,0,0},
+      {0,0,0,0,1,0,0,0},
+      {0,0,0,0,1,0,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+  bool matrizZ[8][8] ={
+      {0,0,0,0,0,0,0,0},
+      {0,0,1,1,1,1,0,0},
+      {0,0,0,0,0,1,0,0},
+      {0,0,0,0,1,0,0,0},
+      {0,0,0,1,0,0,0,0},
+      {0,0,1,0,0,0,0,0},
+      {0,0,1,1,1,1,0,0},
+      {0,0,0,0,0,0,0,0}
+    };
+
+  if(carac == '0'){
+    waaaa(matriz0);
+  }
+  if(carac == '1'){
+    waaaa(matriz1);
+  }
+  if(carac == '2'){
+    waaaa(matriz2);
+  }
+  if(carac == '3'){
+    waaaa(matriz3);
+  }
+  if(carac == '4'){
+    waaaa(matriz4);
+  }
+  if(carac == '5'){
+    waaaa(matriz5);
+  }
+  if(carac == '6'){
+    waaaa(matriz6);
+  }
+  if(carac == '7'){
+    waaaa(matriz7);
+  }
+  if(carac == '8'){
+    waaaa(matriz8);
+  }
+  if(carac == '9'){
+    waaaa(matriz9);
+  }
+  if(carac == 'A'){
+    waaaa(matrizA);
+  }
+  if(carac == 'B'){
+    waaaa(matrizB);
+  }
+  if(carac == 'C'){
+    waaaa(matrizC);
+  }
+  if(carac == 'D'){
+    waaaa(matrizD);
+  }
+  if(carac == 'E'){
+    waaaa(matrizE);
+  }
+  if(carac == 'F'){
+    waaaa(matrizF);
+  }
+  if(carac == 'G'){
+    waaaa(matrizG);
+  }
+  if(carac == 'H'){
+    waaaa(matrizH);
+  }
+  if(carac == 'I'){
+    waaaa(matrizI);
+  }
+  if(carac == 'J'){
+    waaaa(matrizJ);
+  }
+  if(carac == 'K'){
+    waaaa(matrizK);
+  }
+  if(carac == 'L'){
+    waaaa(matrizL);
+  }
+  if(carac == 'M'){
+    waaaa(matrizM);
+  }
+  if(carac == 'N'){
+    waaaa(matrizN);
+  }
+  if(carac == 'O'){
+    waaaa(matrizO);
+  }
+  if(carac == 'P'){
+    waaaa(matrizP);
+  }
+  if(carac == 'Q'){
+    waaaa(matrizQ);
+  }
+  if(carac == 'R'){
+    waaaa(matrizR);
+  }
+  if(carac == 'S'){
+    waaaa(matrizS);
+  }
+  if(carac == 'T'){
+    waaaa(matrizT);
+  }
+  if(carac == 'U'){
+    waaaa(matrizU);
+  }
+  if(carac == 'V'){
+    waaaa(matrizV);
+  }
+  if(carac == 'W'){
+    waaaa(matrizW);
+  }
+  if(carac == 'X'){
+    waaaa(matrizX);
+  }
+  if(carac == 'Y'){
+    waaaa(matrizY);
+  }
+  if(carac == 'Z'){
+    waaaa(matrizZ);
+  }
+  
+}
+
+void waaaa(bool mat[8][8]){
+  for(int i=0; i<8; i++) {
+      for(int j=0; j<8; j++) {
+        lc.setLed(0, i, j, mat[i][j]);
+      }
+    }
 }
