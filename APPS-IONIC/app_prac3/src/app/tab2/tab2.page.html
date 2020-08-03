@@ -1,0 +1,40 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      <ion-button color="success">
+        <ion-icon slot="icon-only" name="navigate-outline"></ion-icon>
+        &nbsp;&nbsp;Jugar
+      </ion-button>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <ion-button color="danger" (click)="apagar()">
+        <ion-icon name="power-outline"></ion-icon>
+      </ion-button>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <canvas id="gameCanvas" width="358" height="512"></canvas>
+  <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <ion-button color="success" (click)="arriba()">
+    <ion-icon name="caret-up-circle-outline"></ion-icon>
+  </ion-button>
+  <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <ion-button color="success" (click)="izq()">
+    <ion-icon name="caret-back-circle-outline"></ion-icon>
+  </ion-button>
+  <ion-button color="success" (click)="neu()">
+    <ion-icon name="close-circle-outline"></ion-icon>
+  </ion-button>
+  <ion-button color="success" (click)="der()">
+    <ion-icon name="caret-forward-circle-outline"></ion-icon>
+  </ion-button>
+  <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <ion-button color="success" (click)="abajo()">
+    <ion-icon name="caret-down-circle-outline"></ion-icon>
+  </ion-button>
+</ion-content>

@@ -1,0 +1,217 @@
+ChildApplet winSensorPeso;
+//ChildApplet2 winSensorSonido;
+
+PImage imgBoton;
+import processing.serial.*;
+PFont f;
+PFont F;
+Serial myPort;        
+int xPos = 40;  
+boolean boton = false;
+color apagado = color(255, 0, 0);
+color encendido = color(0, 255, 0);
+
+void settings() {
+  size(400, 400);
+  smooth();
+}
+
+void setup() {
+  surface.setTitle("Boton Antirrobos");
+  winSensorPeso = new ChildApplet();
+  //winSensorSonido = new ChildApplet2();
+  imgBoton = loadImage("boton.png");
+  F = createFont("Arial", 24, true);
+}
+
+void draw() {
+  background(255, 255, 255);
+  
+  if(boton){
+    fill(encendido);
+  }else{
+    fill(apagado); 
+  }
+  
+  ellipse(200, 175, 300, 300);
+  image(imgBoton, 75, 50);
+  textFont(F);
+  text("ANTIRROBO", 130, 360);
+}
+
+void mouseClicked(){
+  float pos = dist(200, 175, mouseX, mouseY);
+  
+  if(pos<150){
+    if(boton){
+      boton = false;
+    }else{
+      boton = true;
+    }
+  }
+}
+
+class ChildApplet extends PApplet {
+  
+  public ChildApplet() {
+    super();
+    PApplet.runSketch(new String[]{this.getClass().getName()}, this);
+  }
+
+  public void settings() {
+    size(700, 600); 
+    smooth();
+  }
+  
+  public void setup() { 
+    f = createFont("Arial",12,true);
+    F = createFont("Arial",24,true);
+    surface.setTitle("Sensor de Peso");
+    println(Serial.list());
+    myPort = new Serial(this, Serial.list()[1], 9600);
+    myPort.bufferUntil('\n');
+    background(0);
+  }
+
+  public void draw() {
+    int y = year(); 
+    int m = month(); 
+    int d = day(); 
+    fill(255,0,0);
+    textFont(F);       
+    fill(255,0,0);
+    textAlign(LEFT);
+    text(d+"/"+m+"/"+y, 300, 25);
+    int s = second(); 
+    int mi = minute(); 
+    int h = hour(); 
+
+    String info = myPort.readStringUntil('\n');
+   
+    if (info != null) {
+      info = trim(info);
+   
+      float puntos = float(info+(char)4); 
+      puntos = map(puntos, 0,117, 0, height*2);
+     
+      println(puntos);
+ 
+      stroke(175);                      
+      line(40,height-40,40,40);
+      
+      stroke(175);                        
+      line(40,height-40,width-40,height-40);
+      
+      stroke(100,100,255);                          //  
+      line(40,height-194,width,height-194);
+     
+      stroke(100,100,255);                          //  
+      line(40,height-344,width,height-344);
+      
+      stroke(100,100,255);                          //  
+      line(40,height-244,width,height-244);
+     
+      stroke(100,100,255);                            
+      line(40,height-294,width,height-294);
+       
+      stroke(100,100,255);                            
+      line(40,height-144,width,height-144);
+     
+      stroke(100,100,255);                           
+      line(40,height-394,width,height-394);
+      
+      stroke(100,100,255);                            
+      line(40,height-94,width,height-94);
+  
+      stroke(100,100,255);                            
+      line(40,height-394,width,height-394);
+      
+      stroke(100,100,255);                            
+      line(40,height-444,width,height-444);
+      stroke(100,100,255);                            
+      line(40,height-494,width,height-494);
+     
+      textFont(F);       
+      fill(255);
+  
+ 
+      textAlign(RIGHT);
+      text("PESO",70,40);                         
+  
+      textAlign(RIGHT);
+      text("HORA --->",590,580);    
+ 
+      fill(0);
+      stroke(255);   
+      
+      for(int j=680;j>600;j--){
+        line(j,height-550,j,height-585);
+      }
+      
+      stroke(0,0,0);
+      textAlign(RIGHT);
+      text(info,680,40); 
+      stroke(0,0,0);   
+      
+      for(int j=700;j>600;j--){
+        line(j,height-10,j,height-39);
+      }
+      
+      stroke(255,0,0);
+      textAlign(LEFT);
+      fill(255,0,0);
+      text(h + ":"+ mi +":" + s,610,580);
+      fill(240);
+      textFont(f); 
+ 
+      textAlign(RIGHT);
+      text("(Kg)",110,40); 
+      
+      textAlign(RIGHT);                 
+      text("50 -",40,60);
+      
+      textAlign(RIGHT);                
+      text("45 -",40,110);
+      
+      textAlign(RIGHT);               
+      text("40 -",40,160);
+      
+      textAlign(RIGHT);                
+      text("35 -",40,210);
+      
+      textAlign(RIGHT);                
+      text("30 -",40,260);
+      
+      textAlign(RIGHT);            
+      text("25 -",40,310);
+      
+      textAlign(RIGHT);                 
+      text("20 -",40,360);
+      
+      textAlign(RIGHT);
+      text("15 -",40,410);
+      
+      textAlign(RIGHT);
+      text("10 -",40,460);
+  
+      textAlign(RIGHT);
+      text("5 -",40,510);
+      
+      textAlign(RIGHT);
+      text("0 -",40,560);
+
+      int inicial=40;            
+      stroke(255,0,0);     
+      
+      for(int i=0;i<3;i++){
+        line(xPos, height-puntos-(inicial+5), xPos, height-puntos-inicial);
+         xPos++;
+      }
+      
+      if (xPos >= width){
+        xPos = 40;
+        background(0);
+      } 
+    }
+  }
+}

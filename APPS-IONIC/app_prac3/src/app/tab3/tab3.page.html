@@ -1,0 +1,117 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      <ion-button color="tertiary">
+        <ion-icon slot="icon-only" name="newspaper-outline"></ion-icon>
+        &nbsp;&nbsp;Estadisticas
+      </ion-button>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<!---->
+<ion-content [fullscreen]="true">
+  <ion-segment [(ngModel)]="tipo">
+  <ion-segment-button value="registros">
+    Tablas
+  </ion-segment-button>
+  <ion-segment-button value="graficas">
+    Graficas
+  </ion-segment-button>
+  </ion-segment>
+
+  <div [ngSwitch]="tipo">
+
+    <ion-list class="cell-6" *ngSwitchCase="'registros'">
+      <ion-item *ngFor="let dato of datos; index as i; let last = last">
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <div style="text-align:center;" class="cell-5">Partida #{{ i + 1 }}</div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <div style="text-align:center;" class="cell-6">Puntos Total</div>
+            </ion-col>
+            <ion-col>
+              <div style="text-align:center;" class="cell-6"># Enemigos Esq.</div>
+            </ion-col>
+            <ion-col>
+              <div style="text-align:center;" class="cell-6">Tiempo Total</div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <div style="text-align:center;">{{ dato.Puntos }}</div>
+            </ion-col>
+            <ion-col>
+              <div style="text-align:center;">{{ dato.Esquivados }}</div>
+            </ion-col>
+            <ion-col>
+              <div style="text-align:center;">{{ dato.Tiempo }} seg</div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <div style="text-align:center;" class="cell-6">Mov ↑</div>
+            </ion-col>
+            <ion-col>
+              <div style="text-align:center;" class="cell-6">Mov ↓</div>
+            </ion-col>
+            <ion-col>
+              <div style="text-align:center;" class="cell-6">Mov ←</div>
+            </ion-col>
+            <ion-col>
+              <div style="text-align:center;" class="cell-6">Mov →</div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <div style="text-align:center;">{{ dato.movAr }}</div>
+            </ion-col>
+            <ion-col>
+              <div style="text-align:center;">{{ dato.movAb }}</div>
+            </ion-col>
+            <ion-col>
+              <div style="text-align:center;">{{ dato.movIzq }}</div>
+            </ion-col>
+            <ion-col>
+              <div style="text-align:center;">{{ dato.movDer }}</div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>      
+      </ion-item>
+    </ion-list>
+
+      <div *ngSwitchCase="'graficas'">
+        <ion-item>
+          <ion-input type="text" [(ngModel)]="stock" placeholder="DD/MM/AAAA, P#1..."></ion-input>
+        </ion-item>
+
+        <canvas baseChart 
+        [datasets]="chartData" 
+        [labels]="chartLabels" 
+        [options]="chartOptions" 
+        [colors]="chartColors"
+        [legend]="showLegend" 
+        [chartType]="chartType">
+        </canvas>
+
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Settings</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-item>
+              <ion-label>Lineas - Barras</ion-label>
+              <ion-toggle (ionChange)="typeChanged($event)" unchecked></ion-toggle>
+            </ion-item>
+            <ion-item>
+              <ion-label>Mostrar Leyenda?</ion-label>
+              <ion-toggle [(ngModel)]="showLegend"></ion-toggle>
+            </ion-item>
+          </ion-card-content>
+        </ion-card>
+      </div>
+  </div>
+</ion-content>

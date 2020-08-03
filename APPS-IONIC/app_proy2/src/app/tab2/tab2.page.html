@@ -1,0 +1,72 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      <ion-button color="success">
+        <ion-icon slot="icon-only" name="navigate-outline"></ion-icon>
+        &nbsp;&nbsp;Acciones
+      </ion-button>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-card>
+    <img src="../../assets/icon/disparo.gif" />
+    <ion-card-header>
+      <ion-card-title>Atacar</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      Al seleccionar esta opción, el tanque realizará un disparo al objetivo.
+      <ion-button color="success" fill="outline" slot="end" (click)="disparar()">
+        <ion-icon name="locate-outline"></ion-icon>
+        &nbsp;&nbsp;Disparar&nbsp;&nbsp;
+        <ion-icon name="skull-outline"></ion-icon>
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <img src="../../assets/icon/evadir.gif" />
+    <ion-card-header>
+      <ion-card-subtitle>¿Cúal será su elección?</ion-card-subtitle>
+      <ion-card-title>Evadir</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      Despues de presionar el botón, el vehículo se moverá a la dirección que sea mas conveniente.
+      <ion-button color="success" fill="outline" slot="end" (click)="esquivar()">
+        <ion-icon name="caret-back-circle-outline"></ion-icon>
+        &nbsp;&nbsp;Evadir&nbsp;&nbsp;
+        <ion-icon name="caret-forward-circle-outline"></ion-icon>
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <img src="../../assets/icon/derribar.gif" />
+    <ion-card-header>
+      <ion-card-title>Derribar</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      Con todo su poder, el tanque derribará el próximo obstáculo que encuentre. Después de eso, entonará su Grito de Guerra.
+      <ion-button color="success" fill="outline" slot="end" (click)="derribar()">
+        <ion-icon name="skull-outline"></ion-icon>
+        &nbsp;&nbsp;Derribar&nbsp;&nbsp;
+        <ion-icon name="megaphone-outline"></ion-icon>
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <img src="../../assets/icon/detener.gif" />
+    <ion-card-header>
+      <ion-card-title>Detener</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      El tanque se parqueará frente al próximo objetivo y finalizará su recorrido.
+      <ion-button color="success" fill="outline" slot="end" (click)="detener()">
+        <ion-icon name="power-outline"></ion-icon>
+        &nbsp;&nbsp;Detener
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="../../assets/images/G2.png">
+    <title>iGloveGT</title>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="../../assets/libs/select2/dist/css/select2.min.css">
+    <link rel="stylesheet" type="text/css" href="../../assets/libs/jquery-minicolors/jquery.minicolors.css">
+    <link rel="stylesheet" type="text/css" href="../../assets/libs/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+    <link rel="stylesheet" type="text/css" href="../../assets/libs/quill/dist/quill.snow.css">
+    <link href="../../dist/css/style.min.css" rel="stylesheet">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+</head>
+
+<body>
+    <!-- ============================================================== -->
+    <!-- Preloader - style you can find in spinners.css -->
+    <!-- ============================================================== -->
+    <div class="preloader">
+        <div class="lds-ripple">
+            <div class="lds-pos"></div>
+            <div class="lds-pos"></div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- Main wrapper - style you can find in pages.scss -->
+    <!-- ============================================================== -->
+    <div id="main-wrapper">
+        <!-- ============================================================== -->
+        <!-- Topbar header - style you can find in pages.scss -->
+        <!-- ============================================================== -->
+        <header class="topbar" data-navbarbg="skin5">
+            <nav class="navbar top-navbar navbar-expand-md navbar-dark">
+                <div class="navbar-header" data-logobg="skin5">
+                    <!-- This is for the sidebar toggle which is visible on mobile only -->
+                    <a class="nav-toggler waves-effect waves-light d-block d-md-none" href="javascript:void(0)"><i class="ti-menu ti-close"></i></a>
+                    <!-- ============================================================== -->
+                    <!-- Logo -->
+                    <!-- ============================================================== -->
+                    <a class="navbar-brand" href="index.html">
+                        <!-- Logo icon -->
+                        <b class="logo-icon p-l-10">
+                            <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
+                            <!-- Dark Logo icon -->
+                            <img src="../../assets/images/G2.png" alt="homepage" class="light-logo" />
+                           
+                        </b>
+                        <!--End Logo icon -->
+                         <!-- Logo text -->
+                        <span class="logo-text">
+                             <!-- dark Logo text -->
+                             <!--<img src="../../assets/images/logo-text.png" alt="homepage" class="light-logo" />-->
+                             &nbsp&nbspGrupo2
+                            
+                        </span>
+                       
+                    </a>
+                    <!-- ============================================================== -->
+                    <!-- End Logo -->
+                    <!-- ============================================================== -->
+                    <!-- ============================================================== -->
+                    <!-- Toggle which is visible on mobile only -->
+                    <!-- ============================================================== -->
+                    <a class="topbartoggler d-block d-md-none waves-effect waves-light" href="javascript:void(0)" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><i class="ti-more"></i></a>
+                </div>
+                <!-- ============================================================== -->
+                <!-- End Logo -->
+                <!-- ============================================================== -->
+                <div class="navbar-collapse collapse" id="navbarSupportedContent" data-navbarbg="skin5">
+                    <!-- ============================================================== -->
+                    <!-- toggle and nav items -->
+                    <!-- ============================================================== -->
+                    <ul class="navbar-nav float-left mr-auto">
+                        <li class="nav-item d-none d-md-block"><a class="nav-link sidebartoggler waves-effect waves-light" href="javascript:void(0)" data-sidebartype="mini-sidebar"><i class="mdi mdi-menu font-24"></i></a></li>
+                    </ul>
+                    <!-- ============================================================== -->
+                    <!-- Right side toggle and nav items -->
+                    <!-- ============================================================== -->
+                    <H1 align="right"> iGloveGT USAC </H1>
+                    <ul class="navbar-nav float-left">
+                        
+                    </ul>
+                </div>
+            </nav>
+        </header>
+        <!-- ============================================================== -->
+        <!-- End Topbar header -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- Left Sidebar - style you can find in sidebar.scss  -->
+        <!-- ============================================================== -->
+        <aside class="left-sidebar" data-sidebarbg="skin5">
+            <!-- Sidebar scroll-->
+            <div class="scroll-sidebar">
+                <!-- Sidebar navigation-->
+                <nav class="sidebar-nav">
+                    <ul id="sidebarnav" class="p-t-30">
+                        
+                        <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link" href="pagina.html" aria-expanded="false"><i class="mdi mdi-weight-kilogram"></i><span class="hide-menu">SELECCION DE RUTINAS</span></a></li>
+
+                        <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link" href="form-basic.html" aria-expanded="false"><i class="mdi mdi-heart-pulse"></i><span class="hide-menu">MONITOREO EN TIEMPO REAL</span></a></li>
+                                                
+                        <li class="sidebar-item"> <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="mdi mdi-folder-multiple-outline"></i><span class="hide-menu">ANALISIS</span></a>
+                            <ul aria-expanded="false" class="collapse  first-level">
+                                <li class="sidebar-item"><a href="peso.html" class="sidebar-link"><i  class="mdi mdi-chart-areaspline"></i><span class="hide-menu"> REPORTES </span></a></li>
+                                <li class="sidebar-item"><a href="inclinacion.html" class="sidebar-link"><i class="mdi mdi-message-text-outline"></i><span class="hide-menu"> SUGERENCIAS </span></a></li>
+                            </ul>
+                        </li>
+
+                    </ul>
+                </nav>
+                <!-- End Sidebar navigation -->
+            </div>
+            <!-- End Sidebar scroll-->
+        </aside>
+        
+        <div class="page-wrapper">
+            
+            <div class="container-fluid">
+                <!-- ============================================================== -->
+                <!-- Start Page Content -->
+                <!-- ============================================================== -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <form class="form-horizontal">
+                                <div class="card-body">
+                                    <h3 class="card-title">Analisis de Repeticiones</h4>
+                                    <br>
+									
+										<canvas id="myChart1"></canvas>
+										<table style="width:50%" align="center">
+											<tr>
+												<td><input type="checkbox" id="general1" name="general1" onclick="click1()">General</td>
+												<td><input type="checkbox" id="tri1" name="tri1" onclick="click1()">Triceps</td>
+												<td><input type="checkbox" id="curl1" name="curl1" onclick="click1()">Curl</td>
+												<td><input type="checkbox" id="lat1" name="lat1" onclick="click1()">Lateral</td>
+											</tr>
+										</table>
+										<br>
+										<canvas id="myChart2"></canvas>
+										<table style="width:50%" align="center">
+											<tr>
+												<td><input type="checkbox" id="general2" name="general2" onclick="click2()">General</td>
+												<td><input type="checkbox" id="ult2" name="ult2" onclick="click2()">Ultima Realizada</td>
+												<td><input type="checkbox" id="total2" name="total2" onclick="click2()">Total</td>
+											</tr>
+										</table>
+										<br>
+										<canvas id="myChart3"></canvas>
+										<table style="width:50%" align="center">
+											<tr>
+												<td><input type="checkbox" id="general3" name="general3" onclick="click3()">General</td>
+												<td><input type="checkbox" id="tri3" name="tri3" onclick="click3()">Triceps</td>
+												<td><input type="checkbox" id="curl3" name="curl3" onclick="click3()">Curl</td>
+												<td><input type="checkbox" id="lat3" name="lat3" onclick="click3()">Lateral</td>
+											</tr>
+										</table>
+										<canvas id="myChart4"></canvas>
+									
+									<br>
+                                    
+                                </div>
+                                <div class="border-top">
+                                    <div class="card-body">
+										<table style="width:50%" align="center">
+											<tr>
+												<td><button type="button" onclick="je()" class="btn btn-primary" align="left">Cargar Graficas</button></td>
+											</tr>
+										</table>
+										<p id="demo"></p>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                </div>
+               
+                <!-- ============================================================== -->
+                <!-- End PAge Content -->
+                <!-- ============================================================== -->
+                <!-- ============================================================== -->
+                <!-- Right sidebar -->
+                <!-- ============================================================== -->
+                <!-- .right-sidebar -->
+                <!-- ============================================================== -->
+                <!-- End Right sidebar -->
+                <!-- ============================================================== -->
+            </div>
+          
+            <footer class="footer text-center">
+                All Rights Reserved by Carlos García. Designed and Developed by Carlos García.
+            </footer>
+            <!-- ============================================================== -->
+            <!-- End footer -->
+            <!-- ============================================================== -->
+        </div>
+        <!-- ============================================================== -->
+        <!-- End Page wrapper  -->
+        <!-- ============================================================== -->
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Wrapper -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- All Jquery -->
+    <!-- ============================================================== -->
+    <script src="../../assets/libs/jquery/dist/jquery.min.js"></script>
+    <!-- Bootstrap tether Core JavaScript -->
+    <script src="../../assets/libs/popper.js/dist/umd/popper.min.js"></script>
+    <script src="../../assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- slimscrollbar scrollbar JavaScript -->
+    <script src="../../assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+    <script src="../../assets/extra-libs/sparkline/sparkline.js"></script>
+    <!--Wave Effects -->
+    <script src="../../dist/js/waves.js"></script>
+    <!--Menu sidebar -->
+    <script src="../../dist/js/sidebarmenu.js"></script>
+    <!--Custom JavaScript -->
+    <script src="../../dist/js/custom.min.js"></script>
+    <!-- This Page JS -->
+    <script src="../../assets/libs/inputmask/dist/min/jquery.inputmask.bundle.min.js"></script>
+    <script src="../../dist/js/pages/mask/mask.init.js"></script>
+    
+    <script src="../../assets/libs/select2/dist/js/select2.full.min.js"></script>
+    <script src="../../assets/libs/select2/dist/js/select2.min.js"></script>
+    <script src="../../assets/libs/jquery-asColor/dist/jquery-asColor.min.js"></script>
+    <script src="../../assets/libs/jquery-asGradient/dist/jquery-asGradient.js"></script>
+    <script src="../../assets/libs/jquery-asColorPicker/dist/jquery-asColorPicker.min.js"></script>
+    <script src="../../assets/libs/jquery-minicolors/jquery.minicolors.min.js"></script>
+    <script src="../../assets/libs/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+    <script src="../../assets/libs/quill/dist/quill.min.js"></script>
+    <script src="../../JavaScript/chart.js"></script>
+    <script src="../../JavaScript/Acciones.js"></script>
+    
+    <script>
+        //***********************************//
+        // For select 2
+        //***********************************//
+        $(".select2").select2();
+
+        /*colorpicker*/
+        $('.demo').each(function() {
+        //
+        // Dear reader, it's actually very easy to initialize MiniColors. For example:
+        //
+        //  $(selector).minicolors();
+        //
+        // The way I've done it below is just for the demo, so don't get confused
+        // by it. Also, data- attributes aren't supported at this time...they're
+        // only used for this demo.
+        //
+        $(this).minicolors({
+                control: $(this).attr('data-control') || 'hue',
+                position: $(this).attr('data-position') || 'bottom left',
+
+                change: function(value, opacity) {
+                    if (!value) return;
+                    if (opacity) value += ', ' + opacity;
+                    if (typeof console === 'object') {
+                        console.log(value);
+                    }
+                },
+                theme: 'bootstrap'
+            });
+
+        });
+        /*datwpicker*/
+        jQuery('.mydatepicker').datepicker();
+        jQuery('#datepicker-autoclose').datepicker({
+            autoclose: true,
+            todayHighlight: true
+        });
+        var quill = new Quill('#editor', {
+            theme: 'snow'
+        });
+       
+	    var myVar = setInterval(myTimer, 1000);
+
+		function myTimer() {
+			var d = new Date();
+			document.getElementById("demo").innerHTML = d.toLocaleTimeString();
+			
+			var ctx1 = document.getElementById('myChart1').getContext('2d');
+			var ctx2 = document.getElementById('myChart2').getContext('2d');
+			var ctx3 = document.getElementById('myChart3').getContext('2d');
+			var ctx4 = document.getElementById('myChart4').getContext('2d');
+			
+			if(activar == true){
+				var i,c;
+				c = 100*corr/(corr+incorr);
+				i = 100*incorr/(corr+incorr);
+				var chart1 = new Chart(ctx1, {
+					type: 'doughnut',
+					data:{
+						datasets: [{
+							data: [c,i],
+							backgroundColor: ['#42a5f5', 'red'],
+							label: 'Comparacion de repeticiones'}],
+						labels: ['Repeticiones Exitosas',' Repeticiones Fallidas']},
+					options: {responsive: true}
+				});
+				
+				if(document.getElementById("total2").checked == true){
+					var chart2 = new Chart(ctx2, {
+						type: 'bar',
+						data: {
+							labels: ['Totales'],
+							datasets: [{
+								label: 'Repeticiones Exitosas',
+								backgroundColor: '#42a5f5',
+								borderColor: 'gray',
+								data: [corr,0]
+							},{
+								label: 'Repeticiones Fallidas',
+								backgroundColor: '#ffab91',
+								borderColor: 'yellow',
+								data: [incorr,0]
+							}		
+							]},
+						options: {responsive: true}
+					});
+				}
+				else{
+					var chart2 = new Chart(ctx2, {
+						type: 'bar',
+						data: {
+							labels: ['Triceps', 'Curl Concentrado', 'Elevacion Lateral', 'Repeticiones extra'],
+							datasets: [{
+								label: 'Repeticiones Exitosas',
+								backgroundColor: '#42a5f5',
+								borderColor: 'gray',
+								data: [tri, curl, lat, 0]
+							},{
+								label: 'Repeticiones Fallidas',
+								backgroundColor: '#ffab91',
+								borderColor: 'yellow',
+								data: [intri, incurl, inlat,extra]
+							}		
+							]},
+						options: {responsive: true}
+					});					
+				}
+				//alert(array_fecha.length+","+array_cor.length+","+array_peso.length+","+array_repe.length);
+				if(document.getElementById("general3").checked == true || document.getElementById("tri3").checked == true || document.getElementById("curl3").checked == true || document.getElementById("lat3").checked == true){
+					var chart3 = new Chart(ctx3, {
+						type: 'line',
+						data: {
+							labels: array_fecha,
+							datasets: [{
+								label: 'Corazon',
+								backgroundColor: 'red',
+								borderColor: 'gray',
+								data: array_cor
+							},{
+								label: 'Peso',
+								backgroundColor: 'green',
+								borderColor: 'gray',
+								data: array_peso
+							},{
+								label: 'Repeticion',
+								backgroundColor: 'blue',
+								borderColor: 'gray',
+								data: array_repe
+							},{
+								label: ' ',
+								backgroundColor: 'white',
+								borderColor: 'white',
+								data: [-5]
+							}		
+							]},
+						options: {}
+					});
+				}
+				if(pausaaa > -1 && tiempoo > -1){
+					var chart4 = new Chart(ctx4, {
+						type: 'bar',
+						data: {
+							labels: ['Pausas Obligatorias'],
+							datasets: [{
+								label: 'Pausas',
+								backgroundColor: 'gray',
+								borderColor: 'gray',
+								data: [pausaaa,0]
+							},{
+								label: 'Segundos Trabajados',
+								backgroundColor: 'green',
+								borderColor: 'yellow',
+								data: [tiempoo,0]
+							}		
+							]},
+						options: {responsive: true}
+					});
+				}
+				var i,c;
+				c = 100*(curl+lat+tri)/(curl+lat+tri+incurl+inlat+intri);
+				i = 100*(incurl+inlat+intri)/(curl+lat+tri+incurl+inlat+intri);
+				
+				getRecom();
+				recomendaciones += d.toLocaleDateString() + "-" + d.toLocaleTimeString() + ": "; 
+				if(i > c){
+					recomendaciones += "En general esta realizando mas ejercicios fallido que exitosos. ";
+				}
+				else if(c > 75){
+					recomendaciones += "En general esta cumpliendo un rendimiento arriba del 75%. ";
+				}
+				else if(c > 60){
+					recomendaciones += "En general esta cumpliendo un rendimiento arriba del 60%. ";
+				}
+				else if(i<c){
+					recomendaciones += "En general esta cumpliendo un rendimiento arriba del 50%. ";
+				}
+				
+				c = 100*(curl)/(curl+incurl);
+				i = 100*(incurl)/(curl+incurl);
+				
+				if(i > c){
+					recomendaciones += "Su rendimiento en el ejercicio Curl Concentrado no es optimo. ";
+				}
+				else if(c > 75){
+					recomendaciones += "Su rendimiento en el ejercicio Curl Concentrado se encuentra arriba del 75%. ";
+				}
+				else if(c > 60){
+					recomendaciones += "Su rendimiento en el ejercicio Curl Concentrado se encuentra arriba del 60%. ";
+				}
+				else if(i<c){
+					recomendaciones += "Su rendimiento en el ejercicio Curl Concentrado se encuentra arriba del 50%. ";
+				}
+				
+				c = 100*(lat)/(lat+inlat);
+				i = 100*(inlat)/(lat+inlat);
+				
+				if(i > c){
+					recomendaciones += "Su rendimiento en el ejercicio Elevacion Lateral no es optimo. ";
+				}
+				else if(c > 75){
+					recomendaciones += "Su rendimiento en el ejercicio Elevacion Lateral se encuentra arriba del 75%. ";
+				}
+				else if(c > 60){
+					recomendaciones += "Su rendimiento en el ejercicio Elevacion Lateral se encuentra arriba del 60%. ";
+				}
+				else if(i<c){
+					recomendaciones += "Su rendimiento en el ejercicio Elevacion Lateral se encuentra arriba del 50%. ";
+				}
+				
+				c = 100*(tri)/(tri+intri);
+				i = 100*(intri)/(tri+intri);
+				
+				if(i > c){
+					recomendaciones += "Su rendimiento en el ejercicio para Triceps no es optimo. ";
+				}
+				else if(c > 75){
+					recomendaciones += "Su rendimiento en el ejercicio para Triceps se encuentra arriba del 75%. ";
+				}
+				else if(c > 60){
+					recomendaciones += "Su rendimiento en el ejercicio para Triceps se encuentra arriba del 60%. ";
+				}
+				else if(i<c){
+					recomendaciones += "Su rendimiento en el ejercicio para Triceps se encuentra arriba del 50%. ";
+				}
+				
+				c = tri+curl+lat;
+				if(extra > c){
+					recomendaciones += "Esta recibiendo mas repeticiones extra que las que debe realizar. ";
+				}
+				else{
+					recomendaciones += "Va muy bien, por ahora las repeticiones extra son menos que las que debe realizar. ";
+				}
+				
+				if(pausaaa >= (tiempoo)/2){
+					recomendaciones += "Pasa mas tiempo descansando que segundos trabajando. "
+				}
+				else if(pausaaa >= (tiempoo)/3){
+					recomendaciones += "Pasa un tercio del tiempo descansando que segundos trabajando. "
+				}
+				else if(pausaaa >= (tiempoo)/4){
+					recomendaciones += "Pasa un cuarto del tiempo descansando que segundos trabajando, moderado. "
+				}
+				else if(pausaaa >= (tiempoo)/5){
+					recomendaciones += "Pasa un quinto del tiempo descansando que segundos trabajando, muy bien. "
+				}
+				else{
+					recomendaciones += "Pasa menos del quinto del tiempo descansando que segundos trabajando. Excelente, aprovecha muy bien su tiempo. "
+				}
+				setRecom();
+				antincorr = incorr;
+				antcorr = corr;
+				incorr = 0;
+				corr = 0;
+				incurl = 0;
+				inlat = 0;
+				intri = 0;
+				extra = 0;
+				curl = 0;
+				lat = 0;
+				tri = 0;
+				pausaaa = -1;
+				tiempoo = -1;
+				activar = false;
+			}
+		}
+		
+		var activar = true;
+		
+		var pausaaa = -1;
+		var tiempoo = -1;
+		
+		var corr = 0;
+		var incorr = 0;
+		var antcorr = -1;
+		var antincorr = -1;
+		
+		var incurl = 0;
+		var inlat = 0;
+		var intri = 0;
+		var extra = 0;
+		var curl = 0;
+		var lat = 0;
+		var tri = 0;
+		
+		var recomendaciones = "";
+		/*
+		function dona(){
+			corr = 0;
+			incorr = 0;
+			var theurl = 'https://arq-wifi.firebaseio.com/Correctos/.json';
+			var client = new HttpClient();
+			client.get(theurl, function (response) {
+				// do something with response
+				response1 = JSON.parse(response,function(key,value){
+				
+					if(key=="curl"){
+						corr += value;
+						curl = value;
+					}
+					else if(key=="lateral"){
+						corr += value;
+						lat = value;
+					}
+					else if(key=="triceps"){
+						corr += value;
+						tri = value;
+					}
+				  });      
+			});
+			
+			theurl = 'https://arq-wifi.firebaseio.com/Incorrectos/.json';
+			client = new HttpClient();
+			client.get(theurl, function (response) {
+				// do something with response
+				response1 = JSON.parse(response,function(key,value){
+				
+					if(key=="curl"){
+						incorr += value;			
+						incurl = value;
+					}
+					else if(key=="lateral"){
+						incorr += value;
+						inlat = value;
+					}
+					else if(key=="triceps"){
+						incorr += value;	
+						intri = value;
+					}
+					else if(key=="repExtra"){
+						extra = value;
+					}
+				  });      
+			});	
+			click1();
+			click2();
+			click3();	
+		}*/
+		
+		function dona(){
+			corr = 0;
+			incorr = 0;
+			var siono = true;
+			
+			var theurl = 'https://arq-wifi.firebaseio.com/RegistroC/.json';
+			var client = new HttpClient();
+			client.get(theurl, function (response) {
+				// do something with response
+				response1 = JSON.parse(response,function(key,value){
+				
+					if(key == "correcto"){
+						siono = false;
+					}
+					else if(key == "incorrecto"){
+						siono = true;
+					}
+					
+					if(siono == true){
+						if(document.getElementById("general1").checked == true){
+							if(key=="curl"){
+								corr += value;
+							}
+							else if(key=="lateral"){
+								corr += value;
+							}
+							else if(key=="triceps"){
+								corr += value;
+							}
+						}
+						else if(document.getElementById("tri1").checked == true){
+							if(key=="triceps"){
+								corr += value;
+							}
+						} 
+						else if(document.getElementById("curl1").checked == true){
+							if(key=="curl"){
+								corr += value;
+							}
+						}
+						else if(document.getElementById("lat1").checked == true){
+							if(key=="lateral"){
+								corr += value;
+							}
+						}
+						//alert(key + "," + siono);
+					}
+					else if(siono == false){
+						if(document.getElementById("general1").checked == true){
+							if(key=="curl"){
+								incorr += value;
+							}
+							else if(key=="lateral"){
+								incorr += value;
+							}
+							else if(key=="triceps"){
+								incorr += value;
+							}
+						}
+						else if(document.getElementById("tri1").checked == true){
+							if(key=="triceps"){
+								incorr += value;
+							}
+						} 
+						else if(document.getElementById("curl1").checked == true){
+							if(key=="curl"){
+								incorr += value;
+							}
+						}
+						else if(document.getElementById("lat1").checked == true){
+							if(key=="lateral"){
+								incorr += value;
+							}
+						}
+					}
+				  });      
+			});
+		} 
+		
+		function dona1(){
+			incurl = 0;
+			inlat = 0;
+			intri = 0;
+			extra = 0;
+			curl = 0;
+			lat = 0;
+			tri = 0;
+			var siono = true;
+			
+			var theurl = 'https://arq-wifi.firebaseio.com/RegistroC/.json';
+			var client = new HttpClient();
+			client.get(theurl, function (response) {
+				// do something with response
+				response1 = JSON.parse(response,function(key,value){
+				
+					if(key == "correcto"){
+						siono = false;
+					}
+					else if(key == "incorrecto"){
+						siono = true;
+					}
+					
+					if(siono == true){
+						if(document.getElementById("general2").checked == true){
+							if(key=="curl"){
+								curl += value;
+							}
+							else if(key=="lateral"){
+								lat += value;
+							}
+							else if(key=="triceps"){
+								tri += value;
+							}
+						}
+						else if(document.getElementById("ult2").checked == true){
+							if(key=="curl"){
+								curl = value;
+							}
+							else if(key=="lateral"){
+								lat = value;
+							}
+							else if(key=="triceps"){
+								tri = value;
+							}
+						} 
+						//alert(key + "," + siono);
+					}
+					else if(siono == false){
+						if(document.getElementById("general2").checked == true){
+							if(key=="curl"){
+								incurl += value;
+							}
+							else if(key=="lateral"){
+								inlat += value;
+							}
+							else if(key=="triceps"){
+								intri += value;
+							}
+							else if(key=="reExtra"){
+								extra += value;
+							}
+						}
+						else if(document.getElementById("ult2").checked == true){
+							if(key=="curl"){
+								incurl = value;
+							}
+							else if(key=="lateral"){
+								inlat = value;
+							}
+							else if(key=="triceps"){
+								intri = value;
+							}
+							else if(key=="reExtra"){
+								extra = value;
+							}
+						} 
+					}
+				  });      
+			});
+		} 
+		
+		function click1(){
+			if(document.getElementById("general1").checked == true){
+				dona();
+				document.getElementById("curl1").checked = false;
+				document.getElementById("lat1").checked = false;
+				document.getElementById("tri1").checked = false;
+			}
+			else if(document.getElementById("lat1").checked == true){
+				dona();
+				document.getElementById("general1").checked = false;
+				document.getElementById("curl1").checked = false;
+				document.getElementById("tri1").checked = false;
+			}
+			else if(document.getElementById("curl1").checked == true){
+				dona();
+				document.getElementById("general1").checked = false;
+				document.getElementById("lat1").checked = false;
+				document.getElementById("tri1").checked = false;
+			}
+			else if(document.getElementById("tri1").checked == true){
+				dona();
+				document.getElementById("general1").checked = false;
+				document.getElementById("lat1").checked = false;
+				document.getElementById("curl1").checked = false;
+			}
+		}
+		
+		function click2(){
+			if(document.getElementById("general2").checked == true){
+				dona1();
+				document.getElementById("ult2").checked = false;
+				document.getElementById("total2").checked = false;
+			}
+			else if(document.getElementById("ult2").checked == true){
+				dona1();
+				document.getElementById("general2").checked = false;
+				document.getElementById("total2").checked = false;
+			}
+			else if(document.getElementById("total2").checked == true){
+				document.getElementById("ult2").checked = false;
+				document.getElementById("general2").checked = false;
+			}
+		}
+		
+		function click3(){
+			array_fecha = [];
+			array_cor = [];
+			array_peso = [];
+			array_repe = [];
+			if(document.getElementById("general3").checked == true){
+				obtenerF();
+				document.getElementById("curl3").checked = false;
+				document.getElementById("lat3").checked = false;
+				document.getElementById("tri3").checked = false;
+			}
+			else if(document.getElementById("lat3").checked == true){
+				obtenerF4();
+				document.getElementById("general3").checked = false;
+				document.getElementById("curl3").checked = false;
+				document.getElementById("tri3").checked = false;
+			}
+			else if(document.getElementById("curl3").checked == true){
+				obtenerF3();
+				document.getElementById("general3").checked = false;
+				document.getElementById("lat3").checked = false;
+				document.getElementById("tri3").checked = false;
+			}
+			else if(document.getElementById("tri3").checked == true){
+				obtenerF2();
+				document.getElementById("general3").checked = false;
+				document.getElementById("lat3").checked = false;
+				document.getElementById("curl3").checked = false;
+			}
+		}
+    
+		function barr(){
+			var theurl = 'https://arq-wifi.firebaseio.com/.json';
+			var client = new HttpClient();
+			client.get(theurl, function (response) {
+				// do something with response
+				response1 = JSON.parse(response,function(key,value){
+				
+					if(key == "pausaOb"){
+						pausaaa = value;
+					}
+					else if(key == "contF"){
+						tiempoo = (value - 100) * 6;
+					}
+				  });      
+			});
+		}
+		
+		function getRecom(){
+			var theurl = 'https://arq-wifi.firebaseio.com/.json';
+			var client = new HttpClient();
+			client.get(theurl, function (response) {
+				// do something with response
+				response1 = JSON.parse(response,function(key,value){
+				
+					if(key == "recom"){
+						recomendaciones = value;
+					}
+				  });      
+			});
+		}
+		
+		function setRecom(){
+			var objct='{"recom":"'+recomendaciones+'"}';
+			httpPatch('https://arq-wifi.firebaseio.com/.json',objct,function(response){
+					var response1 = JSON.parse(response);
+					//alert(response1);
+			});
+		 }
+		
+		function je(){
+			activar = true;
+			barr();
+			//alert(pausaaa+","+tiempoo);
+		}
+	</script>
+</body>
+
+</html>
